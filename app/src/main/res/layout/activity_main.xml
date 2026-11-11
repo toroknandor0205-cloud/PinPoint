@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A2E">
+
+    <com.example.liquidglass.LiquidGlassView
+        android:id="@+id/glassCard"
+        android:layout_width="340dp"
+        android:layout_height="280dp"
+        android:layout_gravity="center"
+        app:cornerRadius="36dp"
+        app:glassMaterial="regular"
+        app:refractionHeight="16dp"
+        app:bevelWidth="32dp"
+        app:dispersionStrength="0.14"
+        app:sensorHighlight="true"
+        app:adaptiveTint="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="28dp">
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📍 Pinpoint"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Várakozás GPS-re…"
+                android:textSize="16sp"
+                android:textColor="#E0E0E0"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/distanceText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text=""
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginTop="20dp"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="#7FDBFF" />
+
+        </LinearLayout>
+    </com.example.liquidglass.LiquidGlassView>
+
+</FrameLayout>

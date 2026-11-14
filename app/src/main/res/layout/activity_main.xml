@@ -1,45 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F0F1A">
+    android:background="#0B0B14">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="100dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Taskly"
-            android:textSize="28sp"
+            android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="16dp" />
+            android:letterSpacing="-0.02" />
+
+        <TextView
+            android:id="@+id/emptyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:gravity="center"
+            android:text="Még nincsenek feladataid.\nNyomd meg a + gombot!"
+            android:textColor="#666680"
+            android:textSize="16sp"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:clipToPadding="false" />
     </LinearLayout>
 
     <!-- Liquid Glass FAB -->
     <com.example.liquidglass.LiquidGlassView
         android:id="@+id/fabGlass"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
-        app:cornerRadius="32dp"
+        app:cornerRadius="34dp"
         app:glassMaterial="regular"
-        app:refractionHeight="12dp"
-        app:bevelWidth="20dp"
-        app:dispersionStrength="0.12"
+        app:refractionHeight="14dp"
+        app:bevelWidth="22dp"
+        app:dispersionStrength="0.13"
         app:sensorHighlight="true">
 
         <TextView
@@ -47,8 +61,9 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="+"
-            android:textSize="32sp"
-            android:textColor="#FFFFFF" />
+            android:textSize="34sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
     </com.example.liquidglass.LiquidGlassView>
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

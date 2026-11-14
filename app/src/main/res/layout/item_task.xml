@@ -1,51 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.liquidglass.LiquidGlassView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.liquidglass.LiquidGlassView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:cornerRadius="20dp"
+    android:layout_marginBottom="14dp"
+    app:cornerRadius="22dp"
     app:glassMaterial="regular"
-    app:refractionHeight="10dp"
+    app:refractionHeight="11dp"
     app:bevelWidth="18dp"
-    app:dispersionStrength="0.10"
+    app:dispersionStrength="0.11"
     app:sensorHighlight="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="18dp"
         android:gravity="center_vertical">
 
         <View
             android:id="@+id/categoryDot"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:background="@android:color/holo_blue_light" />
+            android:layout_width="14dp"
+            android:layout_height="14dp" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="12dp">
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="12dp">
 
             <TextView
                 android:id="@+id/taskTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end" />
 
             <TextView
-                android:id="@+id/taskDue"
-                android:layout_width="wrap_content"
+                android:id="@+id/taskMeta"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#AAAAAA"
-                android:textSize="13sp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="4dp"
+                android:textColor="#A0A0B0"
+                android:textSize="13sp" />
         </LinearLayout>
 
         <CheckBox

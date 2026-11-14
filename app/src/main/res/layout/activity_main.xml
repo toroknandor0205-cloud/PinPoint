@@ -1,36 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#0B0B14">
+    android:layout_height="match_parent">
+
+    <!-- Háttérkép -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bg_abstract"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
+
+    <!-- Sötét overlay a jobb olvashatóságért -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#AA0B0B14" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
-        android:paddingTop="24dp"
-        android:paddingBottom="100dp">
+        android:paddingTop="40dp"
+        android:paddingBottom="110dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Fejléc Liquid Glass-ban -->
+        <com.example.liquidglass.LiquidGlassView
+            android:id="@+id/headerGlass"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Taskly"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:letterSpacing="-0.02" />
+            app:cornerRadius="28dp"
+            app:glassMaterial="regular"
+            app:refractionHeight="14dp"
+            app:bevelWidth="24dp"
+            app:dispersionStrength="0.12"
+            app:sensorHighlight="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="22dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Taskly"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/taskCountText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="0 aktív feladat"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </com.example.liquidglass.LiquidGlassView>
+
+        <!-- Filter gombok -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/filterContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/filterAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="10dp"
+                    android:text="Összes"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:background="@android:color/transparent" />
+
+                <TextView
+                    android:id="@+id/filterActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="10dp"
+                    android:text="Aktív"
+                    android:textColor="#AAAAAA"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/filterDone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="10dp"
+                    android:text="Kész"
+                    android:textColor="#AAAAAA"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <TextView
             android:id="@+id/emptyText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="60dp"
             android:gravity="center"
-            android:text="Még nincsenek feladataid.\nNyomd meg a + gombot!"
-            android:textColor="#666680"
+            android:text="Nincs még feladat.\nNyomd meg a + gombot az indításhoz."
+            android:textColor="#88FFFFFF"
             android:textSize="16sp"
             android:visibility="gone" />
 
@@ -38,22 +124,22 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="12dp"
             android:clipToPadding="false" />
     </LinearLayout>
 
-    <!-- Liquid Glass FAB -->
+    <!-- FAB -->
     <com.example.liquidglass.LiquidGlassView
         android:id="@+id/fabGlass"
-        android:layout_width="68dp"
-        android:layout_height="68dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
-        app:cornerRadius="34dp"
+        app:cornerRadius="35dp"
         app:glassMaterial="regular"
-        app:refractionHeight="14dp"
-        app:bevelWidth="22dp"
-        app:dispersionStrength="0.13"
+        app:refractionHeight="16dp"
+        app:bevelWidth="24dp"
+        app:dispersionStrength="0.14"
         app:sensorHighlight="true">
 
         <TextView
@@ -61,9 +147,9 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="+"
-            android:textSize="34sp"
+            android:textSize="36sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
     </com.example.liquidglass.LiquidGlassView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>

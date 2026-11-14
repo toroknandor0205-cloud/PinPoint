@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,8 +32,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyText: TextView
+    private lateinit var taskCountText: TextView
     private lateinit var fabGlass: LiquidGlassView
-    private val tasks = mutableListOf<Task>()
+    private lateinit var headerGlass: LiquidGlassView
+    private lateinit var filterAll: TextView
+    private lateinit var filterActive: TextView
+    private lateinit var filterDone: TextView
+
+    private val allTasks = mutableListOf<Task>()
+    private var currentFilter = "ALL" // ALL, ACTIVE, DONE
     private lateinit var adapter: TaskAdapter
 
     private val categories = listOf("Személyes", "Munka", "Otthon", "Egészség", "Egyéb")
@@ -52,8 +58,15 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView)
         emptyText = findViewById(R.id.emptyText)
+        taskCountText = findViewById(R.id.taskCountText)
         fabGlass = findViewById(R.id.fabGlass)
+        headerGlass = findViewById(R.id.headerGlass)
+        filterAll = findViewById(R.id.filterAll)
+        filterActive = findViewById(R.id.filterActive)
+        filterDone = findViewById(R.id.filterDone)
+
         fabGlass.enableDynamicBackground = true
+        headerGlass.enableDynamicBackground = true
 
         loadTasks()
 
@@ -61,96 +74,121 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        updateEmptyState()
+        setupFilters()
+        updateUI()
 
         fabGlass.setOnClickListener { showTaskDialog(null) }
     }
 
-    private fun updateEmptyState() {
-        emptyText.visibility = if (tasks.isEmpty()) View.VISIBLE else View.GONE
+    private fun setupFilters() {
+        filterAll.setOnClickListener { setFilter("ALL") }
+        filterActive.setOnClickListener { setFilter("ACTIVE") }
+        filterDone.setOnClickListener { setFilter("DONE") }
+    }
+
+    private fun setFilter(filter: String) {
+        currentFilter = filter
+        filterAll.setTextColor(if (filter == "ALL") Color.WHITE else Color.parseColor("#888888"))
+        filterActive.setTextColor(if (filter == "ACTIVE") Color.WHITE else Color.parseColor("#888888"))
+        filterDone.setTextColor(if (filter == "DONE") Color.WHITE else Color.parseColor("#888888"))
+        adapter.notifyDataSetChanged()
+        updateUI()
+    }
+
+    private fun getFilteredTasks(): List<Task> {
+        return when (currentFilter) {
+            "ACTIVE" -> allTasks.filter { !it.done }
+            "DONE" -> allTasks.filter { it.done }
+            else -> allTasks
+        }
+    }
+
+    private fun updateUI() {
+        val activeCount = allTasks.count { !it.done }
+        taskCountText.text = when {
+            activeCount == 0 -> "Nincs aktív feladat"
+            activeCount == 1 -> "1 aktív feladat"
+            else -> "$activeCount aktív feladat"
+        }
+        emptyText.visibility = if (getFilteredTasks().isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun showTaskDialog(editTask: Task?) {
-        val dialogView = LayoutInflater.from(this).inflate(android.R.layout.simple_list_item_1, null)
-
-        // Custom layout for dialog
         val container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(48, 24, 48, 8)
+            setPadding(48, 32, 48, 16)
         }
 
         val titleInput = EditText(this).apply {
-            hint = "Mit kell megcsinálni?"
+            hint = "Feladat neve..."
             setText(editTask?.title ?: "")
             setTextColor(Color.WHITE)
             setHintTextColor(Color.GRAY)
-            setBackgroundColor(Color.parseColor("#1E1E2E"))
-            setPadding(32, 28, 32, 28)
+            setBackgroundColor(Color.parseColor("#22FFFFFF"))
+            setPadding(36, 32, 36, 32)
             textSize = 16f
         }
         container.addView(titleInput)
 
-        // Category selector
-        val categoryLabel = TextView(this).apply {
+        val catLabel = TextView(this).apply {
             text = "Kategória"
             setTextColor(Color.LTGRAY)
             textSize = 13f
-            setPadding(0, 28, 0, 12)
+            setPadding(0, 32, 0, 12)
         }
-        container.addView(categoryLabel)
+        container.addView(catLabel)
 
-        val categoryGroup = RadioGroup(this).apply {
-            orientation = RadioGroup.HORIZONTAL
-        }
-
+        val categoryGroup = RadioGroup(this).apply { orientation = LinearLayout.VERTICAL }
         var selectedCategory = editTask?.category ?: "Egyéb"
+
         categories.forEach { cat ->
             val rb = RadioButton(this).apply {
-                text = cat
+                text = "  $cat"
                 setTextColor(Color.WHITE)
-                buttonTintList = android.content.res.ColorStateList.valueOf(Color.parseColor(categoryColors[cat] ?: "#90A4AE"))
+                buttonTintList = android.content.res.ColorStateList.valueOf(
+                    Color.parseColor(categoryColors[cat] ?: "#90A4AE")
+                )
                 isChecked = cat == selectedCategory
                 setOnClickListener { selectedCategory = cat }
+                setPadding(0, 12, 0, 12)
             }
             categoryGroup.addView(rb)
         }
         container.addView(categoryGroup)
 
-        // Date
         var selectedDate = editTask?.dueDate
-        val dateButton = Button(this).apply {
+        val dateBtn = Button(this).apply {
             text = selectedDate?.let {
-                "Határidő: ${SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(Date(it))}"
-            } ?: "Határidő választása"
-            setBackgroundColor(Color.parseColor("#2A2A3A"))
+                "Határidő: ${SimpleDateFormat("yyyy. MM. dd.", Locale.getDefault()).format(Date(it))}"
+            } ?: "Határidő hozzáadása"
+            setBackgroundColor(Color.parseColor("#33FFFFFF"))
             setTextColor(Color.WHITE)
+            setPadding(0, 28, 0, 28)
             setOnClickListener {
                 val cal = Calendar.getInstance()
                 selectedDate?.let { cal.timeInMillis = it }
                 DatePickerDialog(this@MainActivity, { _, y, m, d ->
                     cal.set(y, m, d, 23, 59)
                     selectedDate = cal.timeInMillis
-                    text = "Határidő: ${SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(Date(selectedDate!!))}"
+                    text = "Határidő: ${SimpleDateFormat("yyyy. MM. dd.", Locale.getDefault()).format(Date(selectedDate!!))}"
                 }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
             }
         }
-        val dateParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 28 }
-        container.addView(dateButton, dateParams)
+        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        lp.topMargin = 28
+        container.addView(dateBtn, lp)
 
         MaterialAlertDialogBuilder(this)
-            .setTitle(if (editTask == null) "Új feladat" else "Feladat szerkesztése")
+            .setTitle(if (editTask == null) "Új feladat" else "Szerkesztés")
             .setView(container)
             .setPositiveButton("Mentés") { _, _ ->
                 val title = titleInput.text.toString().trim()
                 if (title.isEmpty()) {
-                    Toast.makeText(this, "Írj be egy feladatot!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Adj meg egy feladatot", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
                 if (editTask == null) {
-                    tasks.add(0, Task(title = title, category = selectedCategory, dueDate = selectedDate))
+                    allTasks.add(0, Task(title = title, category = selectedCategory, dueDate = selectedDate))
                 } else {
                     editTask.title = title
                     editTask.category = selectedCategory
@@ -158,15 +196,17 @@ class MainActivity : AppCompatActivity() {
                 }
                 saveTasks()
                 adapter.notifyDataSetChanged()
-                updateEmptyState()
+                updateUI()
             }
             .setNegativeButton("Mégse", null)
-            .setNeutralButton(if (editTask != null) "Törlés" else null) { _, _ ->
+            .apply {
                 if (editTask != null) {
-                    tasks.remove(editTask)
-                    saveTasks()
-                    adapter.notifyDataSetChanged()
-                    updateEmptyState()
+                    setNeutralButton("Törlés") { _, _ ->
+                        allTasks.remove(editTask)
+                        saveTasks()
+                        adapter.notifyDataSetChanged()
+                        updateUI()
+                    }
                 }
             }
             .show()
@@ -174,64 +214,59 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveTasks() {
         val arr = JSONArray()
-        tasks.forEach { task ->
+        allTasks.forEach { t ->
             arr.put(JSONObject().apply {
-                put("id", task.id)
-                put("title", task.title)
-                put("dueDate", task.dueDate ?: JSONObject.NULL)
-                put("category", task.category)
-                put("done", task.done)
+                put("id", t.id)
+                put("title", t.title)
+                put("dueDate", t.dueDate ?: JSONObject.NULL)
+                put("category", t.category)
+                put("done", t.done)
             })
         }
         getSharedPreferences("taskly", Context.MODE_PRIVATE)
-            .edit()
-            .putString("tasks", arr.toString())
-            .apply()
+            .edit().putString("tasks", arr.toString()).apply()
     }
 
     private fun loadTasks() {
-        val json = getSharedPreferences("taskly", Context.MODE_PRIVATE)
-            .getString("tasks", "[]") ?: "[]"
+        val json = getSharedPreferences("taskly", Context.MODE_PRIVATE).getString("tasks", "[]") ?: "[]"
         val arr = JSONArray(json)
-        tasks.clear()
+        allTasks.clear()
         for (i in 0 until arr.length()) {
-            val obj = arr.getJSONObject(i)
-            tasks.add(
-                Task(
-                    id = obj.getString("id"),
-                    title = obj.getString("title"),
-                    dueDate = if (obj.isNull("dueDate")) null else obj.getLong("dueDate"),
-                    category = obj.optString("category", "Egyéb"),
-                    done = obj.optBoolean("done", false)
-                )
-            )
+            val o = arr.getJSONObject(i)
+            allTasks.add(Task(
+                id = o.getString("id"),
+                title = o.getString("title"),
+                dueDate = if (o.isNull("dueDate")) null else o.getLong("dueDate"),
+                category = o.optString("category", "Egyéb"),
+                done = o.optBoolean("done", false)
+            ))
         }
     }
 
     inner class TaskAdapter : RecyclerView.Adapter<TaskAdapter.VH>() {
-
-        inner class VH(view: View) : RecyclerView.ViewHolder(view) {
-            val glass = view as LiquidGlassView
-            val title: TextView = view.findViewById(R.id.taskTitle)
-            val meta: TextView = view.findViewById(R.id.taskMeta)
-            val check: CheckBox = view.findViewById(R.id.taskCheck)
-            val dot: View = view.findViewById(R.id.categoryDot)
+        inner class VH(v: View) : RecyclerView.ViewHolder(v) {
+            val glass = v as LiquidGlassView
+            val title: TextView = v.findViewById(R.id.taskTitle)
+            val meta: TextView = v.findViewById(R.id.taskMeta)
+            val check: CheckBox = v.findViewById(R.id.taskCheck)
+            val dot: View = v.findViewById(R.id.categoryDot)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_task, parent, false)
-            (view as LiquidGlassView).enableDynamicBackground = true
-            return VH(view)
+            val v = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
+            (v as LiquidGlassView).enableDynamicBackground = true
+            return VH(v)
         }
 
+        override fun getItemCount() = getFilteredTasks().size
+
         override fun onBindViewHolder(holder: VH, position: Int) {
-            val task = tasks[position]
+            val task = getFilteredTasks()[position]
 
             holder.title.text = task.title
             if (task.done) {
                 holder.title.paintFlags = holder.title.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                holder.title.setTextColor(Color.parseColor("#777788"))
+                holder.title.setTextColor(Color.parseColor("#88FFFFFF"))
             } else {
                 holder.title.paintFlags = holder.title.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
                 holder.title.setTextColor(Color.WHITE)
@@ -243,36 +278,28 @@ class MainActivity : AppCompatActivity() {
                 setColor(color)
             }
 
-            val dueText = task.dueDate?.let {
+            val dueStr = task.dueDate?.let {
                 val sdf = SimpleDateFormat("MMM d.", Locale("hu"))
-                val dateStr = sdf.format(Date(it))
-                val now = System.currentTimeMillis()
-                when {
-                    it < now && !task.done -> "Lejárt • $dateStr"
-                    else -> dateStr
-                }
+                val formatted = sdf.format(Date(it))
+                if (it < System.currentTimeMillis() && !task.done) "Lejárt • $formatted" else formatted
             } ?: "Nincs határidő"
 
-            holder.meta.text = "${task.category}  •  $dueText"
-            if (task.dueDate != null && task.dueDate!! < System.currentTimeMillis() && !task.done) {
-                holder.meta.setTextColor(Color.parseColor("#FF8A80"))
-            } else {
-                holder.meta.setTextColor(Color.parseColor("#A0A0B0"))
-            }
+            holder.meta.text = "${task.category}  ·  $dueStr"
+            holder.meta.setTextColor(
+                if (task.dueDate != null && task.dueDate!! < System.currentTimeMillis() && !task.done)
+                    Color.parseColor("#FF8A80") else Color.parseColor("#B0B0C0")
+            )
 
             holder.check.setOnCheckedChangeListener(null)
             holder.check.isChecked = task.done
-            holder.check.setOnCheckedChangeListener { _, isChecked ->
-                task.done = isChecked
+            holder.check.setOnCheckedChangeListener { _, checked ->
+                task.done = checked
                 saveTasks()
-                notifyItemChanged(position)
+                notifyDataSetChanged()
+                updateUI()
             }
 
-            holder.itemView.setOnClickListener {
-                showTaskDialog(task)
-            }
+            holder.itemView.setOnClickListener { showTaskDialog(task) }
         }
-
-        override fun getItemCount() = tasks.size
     }
 }

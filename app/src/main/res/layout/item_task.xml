@@ -4,11 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="14dp"
+    android:layout_marginBottom="12dp"
     app:cornerRadius="22dp"
     app:glassMaterial="regular"
-    app:refractionHeight="11dp"
-    app:bevelWidth="18dp"
+    app:refractionHeight="12dp"
+    app:bevelWidth="20dp"
     app:dispersionStrength="0.11"
     app:sensorHighlight="true">
 
@@ -21,8 +21,8 @@
 
         <View
             android:id="@+id/categoryDot"
-            android:layout_width="14dp"
-            android:layout_height="14dp" />
+            android:layout_width="12dp"
+            android:layout_height="12dp" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -30,14 +30,14 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:layout_marginStart="14dp"
-            android:layout_marginEnd="12dp">
+            android:layout_marginEnd="10dp">
 
             <TextView
                 android:id="@+id/taskTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:maxLines="2"
                 android:ellipsize="end" />
@@ -46,9 +46,9 @@
                 android:id="@+id/taskMeta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="#A0A0B0"
-                android:textSize="13sp" />
+                android:layout_marginTop="3dp"
+                android:textColor="#B0B0C0"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <CheckBox
